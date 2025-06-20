@@ -1,191 +1,191 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Procedural Art Generator</title>
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Procedural Art Generator</title>
+	<style>
+		* {
+			margin: 0;
+			padding: 0;
+			box-sizing: border-box;
+		}
 
-        body {
-            background: #0f0c29;
-            background: linear-gradient(to right, #24243e, #302b63, #0f0c29);
-            overflow: hidden;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            height: 100vh;
-        }
+		body {
+			background: #0f0c29;
+			background: linear-gradient(to right, #24243e, #302b63, #0f0c29);
+			overflow: hidden;
+			font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+			height: 100vh;
+		}
 
-        canvas {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            z-index: 1;
-        }
+		canvas {
+			position: absolute;
+			top: 0;
+			left: 0;
+			width: 100%;
+			height: 100%;
+			z-index: 1;
+		}
 
-        .seed-control-panel {
-            position: absolute;
-            top: 10px;
-            right: 10px;
-            z-index: 10;
-            background: rgba(30, 30, 50, 0.85);
-            border-radius: 10px;
-            padding: 15px;
-            font-size: 0.9rem;
-            color: #a0a0ff;
-            border: 1px solid rgba(100, 100, 200, 0.3);
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-            min-width: 50px;
-            max-width: 400px;
-            transition: transform 0.3s ease;
-        }
+		.seed-control-panel {
+			position: absolute;
+			top: 10px;
+			right: 10px;
+			z-index: 10;
+			background: rgba(30, 30, 50, 0.85);
+			border-radius: 10px;
+			padding: 15px;
+			font-size: 0.9rem;
+			color: #a0a0ff;
+			border: 1px solid rgba(100, 100, 200, 0.3);
+			box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+			display: flex;
+			flex-direction: column;
+			gap: 10px;
+			min-width: 50px;
+			max-width: 400px;
+			transition: transform 0.3s ease;
+		}
 
-        .seed-control-panel:hover {
-            transform: scale(1.01);
-        }
+		.seed-control-panel:hover {
+			transform: scale(1.01);
+		}
 
-        .seed-control-panel label {
-            font-weight: bold;
-            margin-bottom: -5px;
-        }
+		.seed-control-panel label {
+			font-weight: bold;
+			margin-bottom: -5px;
+		}
 
-        .seed-control {
-            display: flex;
-            gap: 10px;
-            align-items: center;
-        }
+		.seed-control {
+			display: flex;
+			gap: 10px;
+			align-items: center;
+		}
 
-        #seedInput {
-            flex: 1;
-            padding: 10px;
-            border-radius: 8px;
-            border: none;
-            background: rgba(10, 10, 20, 0.8);
-            color: #e0e0ff;
-            font-size: 1rem;
-            border: 2px solid #4a4a8a;
-            outline: none;
-            transition: all 0.3s ease;
-        }
+		#seedInput {
+			flex: 1;
+			padding: 10px;
+			border-radius: 8px;
+			border: none;
+			background: rgba(10, 10, 20, 0.8);
+			color: #e0e0ff;
+			font-size: 1rem;
+			border: 2px solid #4a4a8a;
+			outline: none;
+			transition: all 0.3s ease;
+		}
 
-        #seedInput:focus {
-            border-color: #86a8e7;
-            box-shadow: 0 0 10px rgba(134, 168, 231, 0.5);
-        }
+		#seedInput:focus {
+			border-color: #86a8e7;
+			box-shadow: 0 0 10px rgba(134, 168, 231, 0.5);
+		}
 
-        #randomSeedBtn {
-            background: linear-gradient(45deg, #86a8e7, #91eae4);
-            border: none;
-            border-radius: 8px;
-            padding: 10px 15px;
-            color: #0f0c29;
-            font-weight: bold;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            font-size: 1rem;
-            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.2);
-        }
+		#randomSeedBtn {
+			background: linear-gradient(45deg, #86a8e7, #91eae4);
+			border: none;
+			border-radius: 8px;
+			padding: 10px 15px;
+			color: #0f0c29;
+			font-weight: bold;
+			cursor: pointer;
+			transition: all 0.3s ease;
+			font-size: 1rem;
+			box-shadow: 0 3px 10px rgba(0, 0, 0, 0.2);
+		}
 
-        #randomSeedBtn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
-        }
+		#randomSeedBtn:hover {
+			transform: translateY(-2px);
+			box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+		}
 
-        .pattern-info {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 10px;
-            margin-top: 5px;
-        }
+		.pattern-info {
+			display: flex;
+			flex-wrap: wrap;
+			gap: 10px;
+			margin-top: 5px;
+		}
 
-        .info-item {
-            background: rgba(20, 20, 40, 0.7);
-            padding: 5px 10px;
-            border-radius: 15px;
-            font-size: 0.85rem;
-        }
+		.info-item {
+			background: rgba(20, 20, 40, 0.7);
+			padding: 5px 10px;
+			border-radius: 15px;
+			font-size: 0.85rem;
+		}
 
-        .info-item span {
-            color: #86a8e7;
-            font-weight: bold;
-        }
-        
-        .hidden {
-            display: none;
-        }
+		.info-item span {
+			color: #86a8e7;
+			font-weight: bold;
+		}
+		
+		.hidden {
+			display: none;
+		}
 
-        footer {
-            z-index: 3;
-            text-align: center;
-            padding: 10px 15px;
-            background-color: rgba(30, 30, 50, 0.8);
-            color: #a0a0ff;
-            font-size: 0.8rem;
-            position: fixed;
-            left: 0;
-            bottom: 0;
-            width: 100%;
-            backdrop-filter: blur(5px);
-            border-top: 1px solid rgba(100, 100, 200, 0.3);
-        }
+		footer {
+			z-index: 3;
+			text-align: center;
+			padding: 10px 15px;
+			background-color: rgba(30, 30, 50, 0.8);
+			color: #a0a0ff;
+			font-size: 0.8rem;
+			position: fixed;
+			left: 0;
+			bottom: 0;
+			width: 100%;
+			backdrop-filter: blur(5px);
+			border-top: 1px solid rgba(100, 100, 200, 0.3);
+		}
 
-        footer p {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 0 15px;
-        }
+		footer p {
+			max-width: 1200px;
+			margin: 0 auto;
+			padding: 0 15px;
+		}
 
-        footer a {
-            color: #86a8e7;
-            text-decoration: none;
-            font-weight: bold;
-            transition: color 0.15s ease-in;
-            position: relative;
-        }
+		footer a {
+			color: #86a8e7;
+			text-decoration: none;
+			font-weight: bold;
+			transition: color 0.15s ease-in;
+			position: relative;
+		}
 
-        footer a:hover {
-            color: #91eae4;
-            text-decoration: underline;
-        }
+		footer a:hover {
+			color: #91eae4;
+			text-decoration: underline;
+		}
 
-        footer a::after {
-            content: "↗";
-            font-size: 0.7em;
-            margin-left: 2px;
-        }
-    </style>
+		footer a::after {
+			content: "↗";
+			font-size: 0.7em;
+			margin-left: 2px;
+		}
+	</style>
 </head>
 <body>
-    <canvas id="artCanvas"></canvas>
-    
-    <div class="seed-control-panel">
-        <label for="seedInput">Seed:</label>
-        <div class="seed-control">
-            <input type="text" id="seedInput" placeholder="Enter a seed...">
-            <button id="randomSeedBtn">🎲</button>
-        </div>
-        
-        <div class="pattern-info">
-            <div class="info-item">Pattern: <span id="patternType"></span></div>
-            <div class="info-item">Palette: <span id="paletteType"></span></div>
-            <div class="info-item">Complexity: <span id="complexity"></span></div>
-        </div>
-    </div>
+	<canvas id="artCanvas"></canvas>
+	
+	<div class="seed-control-panel">
+		<label for="seedInput">Seed:</label>
+		<div class="seed-control">
+			<input type="text" id="seedInput" placeholder="Enter a seed...">
+			<button id="randomSeedBtn">🎲</button>
+		</div>
+		
+		<div class="pattern-info">
+			<div class="info-item">Pattern: <span id="patternType"></span></div>
+			<div class="info-item">Palette: <span id="paletteType"></span></div>
+			<div class="info-item">Complexity: <span id="complexity"></span></div>
+		</div>
+	</div>
 
-    <footer>
-        <p>&copy; 2025. All rights reserved. Designed by 
-            <a href="https://wartets.github.io/Wartets/" target="_blank">Wartets</a>.
-            <wbr>Check out more projects on <a href="https://github.com/wartets" target="_blank">GitHub</a>.
-        </p>
-    </footer>
+	<footer>
+		<p>&copy; 2025. All rights reserved. Designed by 
+			<a href="https://wartets.github.io/Wartets/" target="_blank">Wartets</a>.
+			<wbr>Check out more projects on <a href="https://github.com/wartets" target="_blank">GitHub</a>.
+		</p>
+	</footer>
 
 	<script src="script.js"></script>
 </body>
