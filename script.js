@@ -8,7 +8,7 @@ const complexitySpan = document.getElementById('complexity');
 
 let currentSeed = "default";
 let patternTypes = [
-	"Géométrique", "Végétal", "Abstrait", "Fractal", "Organique", "Minimaliste", "Fractales de Newton", "Tissus Voronoï organiques", "Réseaux de neurones dessinés",
+	"Géométrique", "Végétal", "Abstrait", "Fractal", "Organique", "Minimaliste", "Fractales de Newton", "Réseaux de neurones dessinés", "Tissus Voronoï organiques",
 	"Lignes de flux de champ vectoriel", "Carrelages quasi-périodiques", "Automates cellulaires artistiques", "Graphes aléatoires décoratifs",
 	"Strates de bruit multiéchelle", "Mandalas symétriques chaotiques", "Trames de contours topographiques"
 ];
@@ -16,7 +16,8 @@ let paletteTypes = [
 	"Pastel", "Vibrante", "Monochrome", "Tropicale", "Néon", "Terracotta", "Océan", "Forêt", "Crépuscule", "Galaxie", "Sahara", "Arctique", "Jardin", "Cristal", "Lave", "Boutique", "Métal", "Vintage",
 	"Cyberpunk", "Café", "Berry", "Méditerranée", "Corail", "Or", "Émeraude", "Rubis", "Saphir", "Violet", "Ciel", "Soleil", "Minuit", "Fumée", "Citron", "Champagne", "Grenade", "Éclipse", "Bouton d'or"
 ];
-let complexityLevels = ["Minimaliste", "Très simple", "Simple", "Modérée", "Moyenne", "Évoluée", "Complexe", "Très complexe", "Intricate", "Hypercomplexe"
+let complexityLevels = [
+	"Minimaliste", "Très simple", "Simple", "Modérée", "Moyenne", "Évoluée", "Complexe", "Très complexe", "Intricate", "Hypercomplexe"
 ];
 let debounceTimer;
 
@@ -107,232 +108,263 @@ function getPalette(random, type) {
 }
 
 function drawBackground(width, height, random, palette) {
-	const bgType = Math.floor(random() * 8);
-	
-	switch (bgType) {
-		case 0: { // Dégradé linéaire simple
-			const gradient = ctx.createLinearGradient(0, 0, width, height);
-			gradient.addColorStop(0, palette[0]);
-			gradient.addColorStop(1, palette[palette.length - 1]);
-			ctx.fillStyle = gradient;
-			ctx.fillRect(0, 0, width, height);
-			break;
-		}
-			
-		case 1: { // Dégradé radial
-			const centerX = width * random();
-			const centerY = height * random();
-			const radius = Math.max(width, height) * (0.5 + random() * 0.5);
-			const radialGradient = ctx.createRadialGradient(
-				centerX, centerY, 0,
-				centerX, centerY, radius
-			);
-			radialGradient.addColorStop(0, palette[0]);
-			radialGradient.addColorStop(1, palette[palette.length - 1]);
-			ctx.fillStyle = radialGradient;
-			ctx.fillRect(0, 0, width, height);
-			break;
-		}
-			
-		case 2: { // Quadrillage
-			ctx.fillStyle = palette[0];
-			ctx.fillRect(0, 0, width, height);
-			
-			const gridSize = 20 + Math.floor(random() * 50);
-			ctx.strokeStyle = palette[1];
-			ctx.lineWidth = 1 + random() * 3;
-			
-			for (let x = 0; x < width; x += gridSize) {
-				ctx.beginPath();
-				ctx.moveTo(x, 0);
-				ctx.lineTo(x, height);
-				ctx.stroke();
-			}
-			
-			for (let y = 0; y < height; y += gridSize) {
-				ctx.beginPath();
-				ctx.moveTo(0, y);
-				ctx.lineTo(width, y);
-				ctx.stroke();
-			}
-			break;
-		}
-			
-		case 3: { // Points
-			ctx.fillStyle = palette[0];
-			ctx.fillRect(0, 0, width, height);
-			
-			const dotSize = 1 + random() * 5;
-			const dotSpacing = 10 + random() * 40;
-			const dotColor = palette[Math.floor(random() * (palette.length - 1)) + 1];
-			
-			ctx.fillStyle = dotColor;
-			for (let x = dotSpacing/2; x < width; x += dotSpacing) {
-				for (let y = dotSpacing/2; y < height; y += dotSpacing) {
-					ctx.beginPath();
-					ctx.arc(x, y, dotSize, 0, Math.PI * 2);
-					ctx.fill();
-				}
-			}
-			break;
-		}
-			
-		case 4: { // Lignes diagonales
-			ctx.fillStyle = palette[0];
-			ctx.fillRect(0, 0, width, height);
-			
-			const lineSpacing = 20 + random() * 50;
-			const lineWidth = 1 + random() * 5;
-			const lineColor = palette[Math.floor(random() * (palette.length - 1)) + 1];
-			
-			ctx.strokeStyle = lineColor;
-			ctx.lineWidth = lineWidth;
-			
-			for (let i = -height; i < width; i += lineSpacing) {
-				ctx.beginPath();
-				ctx.moveTo(i, 0);
-				ctx.lineTo(i + height, height);
-				ctx.stroke();
-			}
-			
-			for (let i = -height; i < width; i += lineSpacing) {
-				ctx.beginPath();
-				ctx.moveTo(i, height);
-				ctx.lineTo(i + height, 0);
-				ctx.stroke();
-			}
-			break;
-		}
-			
-		case 5: { // Texture organique
-			ctx.fillStyle = palette[0];
-			ctx.fillRect(0, 0, width, height);
-			
-			const organicCount = 50 + Math.floor(random() * 150);
-			ctx.globalAlpha = 0.1 + random() * 0.3;
-			
-			for (let i = 0; i < organicCount; i++) {
-				const x = random() * width;
-				const y = random() * height;
-				const size = 20 + random() * 100;
-				const color = palette[Math.floor(random() * palette.length)];
-				
-				ctx.fillStyle = color;
-				ctx.beginPath();
-				ctx.arc(x, y, size, 0, Math.PI * 2);
-				ctx.fill();
-			}
-			ctx.globalAlpha = 1.0;
-			break;
-		}
-			
-		case 6: { // Rayons
-			const centerX = width / 2;
-			const centerY = height / 2;
-			const maxRadius = Math.sqrt(width*width + height*height) / 2;
-			
-			for (let r = 0; r < maxRadius; r += 10) {
-				const gradient = ctx.createRadialGradient(
-					centerX, centerY, r,
-					centerX, centerY, r + 10
-				);
-				
-				const colorIndex = Math.floor(r / maxRadius * palette.length);
-				const nextColorIndex = Math.min(colorIndex + 1, palette.length - 1);
-				
-				gradient.addColorStop(0, palette[colorIndex]);
-				gradient.addColorStop(1, palette[nextColorIndex]);
-				
-				ctx.fillStyle = gradient;
-				ctx.beginPath();
-				ctx.arc(centerX, centerY, r + 10, 0, Math.PI * 2);
-				ctx.fill();
-			}
-			break;
-		}
-			
-		case 7: // Motif aléatoire
-		default: {
-			ctx.fillStyle = palette[0];
-			ctx.fillRect(0, 0, width, height);
-			break;
-		}
-	}
+    const bgType = Math.floor(random() * 8);
+    
+    const pastelPalette = palette.map(color => {
+        const r = parseInt(color.slice(1, 3), 16);
+        const g = parseInt(color.slice(3, 5), 16);
+        const b = parseInt(color.slice(5, 7), 16);
+        
+        const gray = 0.3 * r + 0.59 * g + 0.11 * b;
+        const darkened = Math.max(0, gray * 0.7);
+        
+        const toHex = (c) => Math.floor(c).toString(16).padStart(2, '0');
+        return `#${toHex(r * 0.3 + darkened * 0.7)}${toHex(g * 0.3 + darkened * 0.7)}${toHex(b * 0.3 + darkened * 0.7)}`;
+    });
+
+    const applyBlur = random() > 0.7;
+    const blurAmount = applyBlur ? Math.floor(1 + random() * 10) : 0;
+    
+    ctx.save();
+    
+    switch (bgType) {
+        case 0: { // Dégradé linéaire simple
+            const gradient = ctx.createLinearGradient(0, 0, width, height);
+            gradient.addColorStop(0, pastelPalette[0]);
+            gradient.addColorStop(1, pastelPalette[pastelPalette.length - 1]);
+            ctx.fillStyle = gradient;
+            ctx.fillRect(0, 0, width, height);
+            break;
+        }
+            
+        case 1: { // Dégradé radial
+            const centerX = width * random();
+            const centerY = height * random();
+            const radius = Math.max(width, height) * (0.5 + random() * 0.5);
+            const radialGradient = ctx.createRadialGradient(
+                centerX, centerY, 0,
+                centerX, centerY, radius
+            );
+            radialGradient.addColorStop(0, pastelPalette[0]);
+            radialGradient.addColorStop(1, pastelPalette[pastelPalette.length - 1]);
+            ctx.fillStyle = radialGradient;
+            ctx.fillRect(0, 0, width, height);
+            break;
+        }
+            
+        case 2: { // Quadrillage
+            ctx.fillStyle = pastelPalette[0];
+            ctx.fillRect(0, 0, width, height);
+            
+            const gridSize = 20 + Math.floor(random() * 50);
+            ctx.strokeStyle = pastelPalette[1];
+            ctx.lineWidth = 1 + random() * 3;
+            ctx.globalAlpha = 0.4;
+            
+            for (let x = 0; x < width; x += gridSize) {
+                ctx.beginPath();
+                ctx.moveTo(x, 0);
+                ctx.lineTo(x, height);
+                ctx.stroke();
+            }
+            
+            for (let y = 0; y < height; y += gridSize) {
+                ctx.beginPath();
+                ctx.moveTo(0, y);
+                ctx.lineTo(width, y);
+                ctx.stroke();
+            }
+            break;
+        }
+            
+        case 3: { // Points
+            ctx.fillStyle = pastelPalette[0];
+            ctx.fillRect(0, 0, width, height);
+            
+            const dotSize = 1 + random() * 3;
+            const dotSpacing = 15 + random() * 40;
+            const dotColor = pastelPalette[Math.floor(random() * (pastelPalette.length - 1)) + 1];
+            
+            ctx.fillStyle = dotColor;
+            ctx.globalAlpha = 0.5;
+            
+            for (let x = dotSpacing/2; x < width; x += dotSpacing) {
+                for (let y = dotSpacing/2; y < height; y += dotSpacing) {
+                    ctx.beginPath();
+                    ctx.arc(x, y, dotSize, 0, Math.PI * 2);
+                    ctx.fill();
+                }
+            }
+            break;
+        }
+            
+        case 4: { // Lignes diagonales
+            ctx.fillStyle = pastelPalette[0];
+            ctx.fillRect(0, 0, width, height);
+            
+            const lineSpacing = 25 + random() * 60;
+            const lineWidth = 1 + random() * 3;
+            const lineColor = pastelPalette[Math.floor(random() * (pastelPalette.length - 1)) + 1];
+            
+            ctx.strokeStyle = lineColor;
+            ctx.lineWidth = lineWidth;
+            ctx.globalAlpha = 0.4;
+            
+            for (let i = -height; i < width; i += lineSpacing) {
+                ctx.beginPath();
+                ctx.moveTo(i, 0);
+                ctx.lineTo(i + height, height);
+                ctx.stroke();
+            }
+            
+            for (let i = -height; i < width; i += lineSpacing) {
+                ctx.beginPath();
+                ctx.moveTo(i, height);
+                ctx.lineTo(i + height, 0);
+                ctx.stroke();
+            }
+            break;
+        }
+            
+        case 5: { // Texture organique
+            ctx.fillStyle = pastelPalette[0];
+            ctx.fillRect(0, 0, width, height);
+            
+            const organicCount = 30 + Math.floor(random() * 100);
+            ctx.globalAlpha = 0.08 + random() * 0.15;
+            
+            for (let i = 0; i < organicCount; i++) {
+                const x = random() * width;
+                const y = random() * height;
+                const size = 15 + random() * 70;
+                const color = pastelPalette[Math.floor(random() * pastelPalette.length)];
+                
+                ctx.fillStyle = color;
+                ctx.beginPath();
+                ctx.arc(x, y, size, 0, Math.PI * 2);
+                ctx.fill();
+            }
+            break;
+        }
+            
+        case 6: { // Rayons
+            const centerX = width / 2;
+            const centerY = height / 2;
+            const maxRadius = Math.sqrt(width*width + height*height) / 2;
+            
+            for (let r = 0; r < maxRadius; r += 10) {
+                const gradient = ctx.createRadialGradient(
+                    centerX, centerY, r,
+                    centerX, centerY, r + 10
+                );
+                
+                const colorIndex = Math.floor(r / maxRadius * pastelPalette.length);
+                const nextColorIndex = Math.min(colorIndex + 1, pastelPalette.length - 1);
+                
+                gradient.addColorStop(0, pastelPalette[colorIndex]);
+                gradient.addColorStop(1, pastelPalette[nextColorIndex]);
+                
+                ctx.fillStyle = gradient;
+                ctx.beginPath();
+                ctx.arc(centerX, centerY, r + 10, 0, Math.PI * 2);
+                ctx.fill();
+            }
+            break;
+        }
+            
+        case 7: // Motif aléatoire
+        default: {
+            ctx.fillStyle = pastelPalette[0];
+            ctx.fillRect(0, 0, width, height);
+            break;
+        }
+    }
+    
+    ctx.restore();
+    
+    if (applyBlur) {
+        ctx.save();
+        ctx.filter = `blur(${blurAmount}px)`;
+        ctx.globalCompositeOperation = 'overlay';
+        ctx.globalAlpha = 0.5;
+        ctx.drawImage(canvas, 0, 0);
+        ctx.restore();
+    }
 }
 
 function generateArt() {
-	if (!ctx) return;
-	
-	const width = canvas.width;
-	const height = canvas.height;
-	
-	ctx.clearRect(0, 0, width, height);
-	
-	const seedNum = currentSeed.split('').reduce((acc, char) => acc + char.charCodeAt(0), 0);
-	const random = createRandom(seedNum);
-	
-	const patternType = Math.floor(random() * patternTypes.length);
-	patternTypeSpan.textContent = patternTypes[patternType];
-	
-	const complexity = Math.floor(random() * complexityLevels.length);
-	complexitySpan.textContent = complexityLevels[complexity];
-	
-	const palette = getPalette(random);
-	
-	drawBackground(width, height, random, palette);
-	
-	switch (patternType) {
-		case 0: // Géométrique
-			drawGeometricPattern(width, height, random, palette, complexity);
-			break;
-		case 1: // Végétal
-			drawOrganicPattern(width, height, random, palette, complexity);
-			break;
-		case 2: // Abstrait
-			drawAbstractPattern(width, height, random, palette, complexity);
-			break;
-		case 3: // Fractal
-			drawFractalPattern(width, height, random, palette, complexity);
-			break;
-		case 4: // Organique
-			drawOrganicPattern(width, height, random, palette, complexity);
-			break;
-		case 5: // Minimaliste
-			drawMinimalPattern(width, height, random, palette, complexity);
-			break;
-		default:
-			drawGeometricPattern(width, height, random, palette, complexity);
-		case 6: // Fractales de Newton
-			drawNewtonFractal(width, height, random, palette, complexity);
-			break;
-		case 7: // Tissus Voronoï organiques
-			drawVoronoi(width, height, random, palette, complexity);
-			break;
-		case 8: // Réseaux de neurones dessinés
-			drawNeuralNetwork(width, height, random, palette, complexity);
-			break;
-		case 9: // Lignes de flux de champ vectoriel
-			drawVectorField(width, height, random, palette, complexity);
-			break;
-		case 10: // Carrelages quasi-périodiques
-			drawQuasiPeriodicTiling(width, height, random, palette, complexity);
-			break;
-		case 11: // Automates cellulaires artistiques
-			drawCellularAutomaton(width, height, random, palette, complexity);
-			break;
-		case 12: // Graphes aléatoires décoratifs
-			drawDecorativeGraph(width, height, random, palette, complexity);
-			break;
-		case 13: // Strates de bruit multiéchelle
-			drawMultiScaleNoise(width, height, random, palette, complexity);
-			break;
-		case 14: // Mandalas symétriques chaotiques
-			drawChaoticMandala(width, height, random, palette, complexity);
-			break;
-		case 15: // Trames de contours topographiques
-			drawTopographicContours(width, height, random, palette, complexity);
-			break;
-	}
+    if (!ctx) return;
+    
+    const width = canvas.width;
+    const height = canvas.height;
+    
+    ctx.clearRect(0, 0, width, height);
+    
+    const seedNum = currentSeed.split('').reduce((acc, char) => acc + char.charCodeAt(0), 0);
+    const random = createRandom(seedNum);
+    
+    const patternType = Math.floor(random() * patternTypes.length);
+    patternTypeSpan.textContent = patternTypes[patternType];
+    
+    const complexity = Math.floor(random() * complexityLevels.length);
+    complexitySpan.textContent = complexityLevels[complexity];
+    
+    const palette = getPalette(random);
+    
+    drawBackground(width, height, random, palette);
+    
+    switch (patternType) {
+        case 0: // Géométrique
+            drawGeometricPattern(width, height, random, palette, complexity);
+            break;
+        case 1: // Végétal
+            drawOrganicPattern(width, height, random, palette, complexity);
+            break;
+        case 2: // Abstrait
+            drawAbstractPattern(width, height, random, palette, complexity);
+            break;
+        case 3: // Fractal
+            drawFractalPattern(width, height, random, palette, complexity);
+            break;
+        case 4: // Organique
+            drawOrganicPattern(width, height, random, palette, complexity);
+            break;
+        case 5: // Minimaliste
+            drawMinimalPattern(width, height, random, palette, complexity);
+            break;
+        case 6: // Fractales de Newton
+            drawNewtonFractal(width, height, random, palette, complexity);
+            break;
+        case 7: // Tissus Voronoï organiques
+            drawVoronoi(width, height, random, palette, complexity);
+            break;
+        case 8: // Réseaux de neurones dessinés
+            drawNeuralNetwork(width, height, random, palette, complexity);
+            break;
+        case 9: // Lignes de flux de champ vectoriel
+            drawVectorField(width, height, random, palette, complexity);
+            break;
+        case 10: // Carrelages quasi-périodiques
+            drawQuasiPeriodicTiling(width, height, random, palette, complexity);
+            break;
+        case 11: // Automates cellulaires artistiques
+            drawCellularAutomaton(width, height, random, palette, complexity);
+            break;
+        case 12: // Graphes aléatoires décoratifs
+            drawDecorativeGraph(width, height, random, palette, complexity);
+            break;
+        case 13: // Strates de bruit multiéchelle
+            drawMultiScaleNoise(width, height, random, palette, complexity);
+            break;
+        case 14: // Mandalas symétriques chaotiques
+            drawChaoticMandala(width, height, random, palette, complexity);
+            break;
+        case 15: // Trames de contours topographiques
+            drawTopographicContours(width, height, random, palette, complexity);
+            break;
+        default:
+            drawGeometricPattern(width, height, random, palette, complexity);
+    }
 }
 
 function drawGeometricPattern(width, height, random, palette, complexity) {
