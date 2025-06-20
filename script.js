@@ -904,7 +904,7 @@ function drawCellularAutomaton(width, height, random, palette, complexity) {
     for (let i = 0; i < cols; i++) {
         grid[i] = new Array(rows);
         for (let j = 0; j < rows; j++) {
-            grid[i][j] = Math.random() > 0.5 ? 1 : 0;
+            grid[i][j] = random() > 0.5 ? 1 : 0;
         }
     }
     
